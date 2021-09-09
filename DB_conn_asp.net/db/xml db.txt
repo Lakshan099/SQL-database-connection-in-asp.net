@@ -1,0 +1,71 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+using System.Data;
+using MySql.Data.MySqlClient;
+
+
+namespace dbcon
+{
+    public partial class form : System.Web.UI.Page
+    {
+        protected void Page_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        protected void Button1_Click(object sender, EventArgs e)
+        {
+            string ID = Request.Form.Get("ID");
+            string lname = Request.Form.Get("lname");
+            string fname = Request.Form.Get("fname");
+            string add = Request.Form.Get("add");
+            string city = Request.Form.Get("city");
+            string mycon = "server =localhost; Uid=root; password = ; persistsecurityinfo = True; database =python_test; SslMode = none";
+            MySqlConnection con = new MySqlConnection(mycon);
+            MySqlCommand cmd = null;
+            try
+            {
+                cmd = new MySqlCommand("INSERT INTO persons (PersonID, LastName, FirstName, Address, City) VALUES ('"+ID+ "','" + lname + "','" + fname + "','" + add + "','" + city + "');", con);
+                con.Open();
+                cmd.ExecuteNonQuery();
+                con.Close();
+
+            }
+            catch (Exception ex)
+            {
+                Response.Write("<script>alert('" + ex.Message + "')</script>");
+                con.Close();
+                return;
+            }
+            Response.Write("<script>alert('Data Saved Successfully')</script>");
+        }
+
+        protected void Button2_Click(object sender, EventArgs e)
+        {
+            string mycon = "server =localhost; Uid=root; password = ; persistsecurityinfo = True; database =python_test; SslMode = none";
+            MySqlConnection con = new MySqlConnection(mycon);
+            DataTable dt = new DataTable();
+            MySqlCommand cmd = null;
+            try
+            {
+                cmd = new MySqlCommand("select * from persons", con);
+                con.Open();
+                dt.Load(cmd.ExecuteReader());
+                con.Close();
+
+            }
+            catch (Exception ex)
+            {
+                Response.Write("<script>alert('" + ex.Message + "')</script>");
+                con.Close();
+            }
+            GridView1.DataSource = dt;
+            GridView1.DataBind();
+        }
+
+    }
+}
